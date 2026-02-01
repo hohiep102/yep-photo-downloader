@@ -213,15 +213,23 @@ async def detect_faces(file: UploadFile = File(...), user: dict = Depends(requir
     result_faces = []
     for face in faces:
         bbox = face.bbox.astype(int)
+        x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
 
-        # Clamp bbox to image bounds
-        x1, y1, x2, y2 = max(0, bbox[0]), max(0, bbox[1]), min(width, bbox[2]), min(height, bbox[3])
+        # Expand bounding box by 50% on each side for less zoomed-in look
+        face_w, face_h = x2 - x1, y2 - y1
+        pad_x, pad_y = int(face_w * 0.5), int(face_h * 0.5)
+        x1, y1 = x1 - pad_x, y1 - pad_y
+        x2, y2 = x2 + pad_x, y2 + pad_y
+
+        # Clamp to image bounds
+        x1, y1 = max(0, x1), max(0, y1)
+        x2, y2 = min(width, x2), min(height, y2)
 
         # Skip tiny faces
         if (x2 - x1) < 30 or (y2 - y1) < 30:
             continue
 
-        # Crop face and encode as base64
+        # Crop face with padding and encode as base64
         crop = img[y1:y2, x1:x2]
         crop_rgb = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
         pil_img = Image.fromarray(crop_rgb)
@@ -395,15 +403,23 @@ async def get_finos_preset(user: dict = Depends(require_auth)):
     result_faces = []
     for face in faces:
         bbox = face.bbox.astype(int)
+        x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
 
-        # Clamp bbox to image bounds
-        x1, y1, x2, y2 = max(0, bbox[0]), max(0, bbox[1]), min(width, bbox[2]), min(height, bbox[3])
+        # Expand bounding box by 50% on each side for less zoomed-in look
+        face_w, face_h = x2 - x1, y2 - y1
+        pad_x, pad_y = int(face_w * 0.5), int(face_h * 0.5)
+        x1, y1 = x1 - pad_x, y1 - pad_y
+        x2, y2 = x2 + pad_x, y2 + pad_y
+
+        # Clamp to image bounds
+        x1, y1 = max(0, x1), max(0, y1)
+        x2, y2 = min(width, x2), min(height, y2)
 
         # Skip tiny faces
         if (x2 - x1) < 30 or (y2 - y1) < 30:
             continue
 
-        # Crop face and encode as base64
+        # Crop face with padding and encode as base64
         crop = img[y1:y2, x1:x2]
         crop_rgb = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
         pil_img = Image.fromarray(crop_rgb)
