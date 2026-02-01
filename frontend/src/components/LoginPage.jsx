@@ -16,7 +16,8 @@ export default function LoginPage() {
   }, []);
 
   const handleLogin = () => {
-    const redirect = window.location.pathname !== '/login' ? window.location.pathname : '/';
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect') || '/';
     window.location.href = `/auth/login?redirect=${encodeURIComponent(redirect)}`;
   };
 

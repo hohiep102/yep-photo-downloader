@@ -168,6 +168,12 @@ function App() {
 
   // Show login page if auth enabled and not authenticated
   if (authEnabled && !user && window.location.pathname !== '/login') {
+    // Redirect to login with return URL
+    const returnUrl = window.location.pathname;
+    if (returnUrl !== '/') {
+      window.location.href = `/login?redirect=${encodeURIComponent(returnUrl)}`;
+      return null;
+    }
     return <LoginPage />;
   }
 
