@@ -5,7 +5,7 @@ import PhotoUpload from './components/PhotoUpload';
 import FaceSelector from './components/FaceSelector';
 import PhotoGallery from './components/PhotoGallery';
 import LoginPage from './components/LoginPage';
-import { getPresetFaces, getCurrentUser } from './api/client';
+import { getPresetFaces, getCurrentUser, getAuthStatus } from './api/client';
 import './App.css';
 
 const STEPS = {
@@ -23,6 +23,7 @@ function App() {
   const [presetName, setPresetName] = useState(null);
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [authEnabled, setAuthEnabled] = useState(true);
 
   // Check auth and preset routes on load
   useEffect(() => {
@@ -34,20 +35,38 @@ function App() {
       return;
     }
 
-    // Check if user is logged in
-    getCurrentUser()
+    // First check if auth is enabled
+    getAuthStatus()
+      .then((status) => {
+        setAuthEnabled(status.auth_enabled);
+
+        if (!status.auth_enabled) {
+          // Auth disabled - allow anonymous access
+          setUser({ name: 'Guest', email: 'anonymous' });
+          setAuthChecked(true);
+          if (path === '/finos') {
+            setPresetName('finos');
+            loadPresetFaces('finos');
+          }
+          return;
+        }
+
+        // Auth enabled - check if user is logged in
+        return getCurrentUser();
+      })
       .then((userData) => {
-        setUser(userData);
-        setAuthChecked(true);
-        // Load preset if on preset route
-        if (path === '/finos') {
-          setPresetName('finos');
-          loadPresetFaces('finos');
+        if (userData && userData.email !== 'anonymous') {
+          setUser(userData);
+          setAuthChecked(true);
+          if (window.location.pathname === '/finos') {
+            setPresetName('finos');
+            loadPresetFaces('finos');
+          }
         }
       })
       .catch(() => {
         setAuthChecked(true);
-        // Not logged in - will show login page
+        // Not logged in - will show login page if auth enabled
       });
   }, []);
 
@@ -147,13 +166,17 @@ function App() {
     );
   }
 
-  // Show login page if not authenticated
-  if (!user && window.location.pathname !== '/login') {
+  // Show login page if auth enabled and not authenticated
+  if (authEnabled && !user && window.location.pathname !== '/login') {
     return <LoginPage />;
   }
 
-  // Login page route
+  // Login page route (only relevant when auth enabled)
   if (window.location.pathname === '/login') {
+    if (!authEnabled) {
+      window.location.href = '/';
+      return null;
+    }
     return <LoginPage />;
   }
 
@@ -201,7 +224,7 @@ function App() {
                   : 'Tìm ảnh của bạn bằng AI nhận diện khuôn mặt'}
               </p>
             </div>
-            {user && (
+            {user && authEnabled && (
               <div className="flex items-center gap-3">
                 <span className="text-white/70 text-sm hidden sm:block">{user.name || user.email}</span>
                 <a

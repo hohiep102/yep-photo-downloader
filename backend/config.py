@@ -31,3 +31,6 @@ MS_CLIENT_ID = os.getenv("MS_CLIENT_ID", "")
 MS_TENANT_ID = os.getenv("MS_TENANT_ID", "")
 MS_CLIENT_SECRET = os.getenv("MS_CLIENT_SECRET", "")
 ALLOWED_DOMAIN = os.getenv("ALLOWED_DOMAIN", "finos.asia")
+
+# Auth is enabled only if all MS credentials are set
+AUTH_ENABLED = bool(MS_CLIENT_ID and MS_TENANT_ID and MS_CLIENT_SECRET)

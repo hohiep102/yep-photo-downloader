@@ -66,4 +66,9 @@ export async function getCurrentUser() {
   return response.data;
 }
 
+export async function getAuthStatus() {
+  const response = await api.get('/api/auth-status');
+  return response.data;
+}
+
 export default api;

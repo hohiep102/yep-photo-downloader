@@ -16,7 +16,7 @@ from insightface.app import FaceAnalysis
 
 from fastapi import Request, Response, Cookie
 from fastapi.responses import RedirectResponse
-from config import DB_PATH, DEFAULT_THRESHOLD, DEFAULT_LIMIT, TEMP_FACE_TTL
+from config import DB_PATH, DEFAULT_THRESHOLD, DEFAULT_LIMIT, TEMP_FACE_TTL, AUTH_ENABLED
 from auth import (
     get_auth_url, exchange_code, validate_domain,
     create_session_token, verify_session_token, get_state_redirect, ALLOWED_DOMAIN
@@ -148,7 +148,9 @@ async def auth_logout():
 
 
 def require_auth(session: str = Cookie(None)):
-    """Dependency to require authentication."""
+    """Dependency to require authentication (when auth is enabled)."""
+    if not AUTH_ENABLED:
+        return {"email": "anonymous", "name": "Guest"}
     if not session:
         raise HTTPException(401, "Not authenticated")
     user = verify_session_token(session)
@@ -157,10 +159,23 @@ def require_auth(session: str = Cookie(None)):
     return user
 
 
+@app.get("/api/auth-status")
+async def get_auth_status():
+    """Check if authentication is enabled."""
+    return {"auth_enabled": AUTH_ENABLED}
+
+
 @app.get("/api/me")
-async def get_current_user(user: dict = Depends(require_auth)):
+async def get_current_user(session: str = Cookie(None)):
     """Get current logged in user."""
-    return {"email": user["email"], "name": user["name"]}
+    if not AUTH_ENABLED:
+        return {"email": "anonymous", "name": "Guest", "auth_enabled": False}
+    if not session:
+        raise HTTPException(401, "Not authenticated")
+    user = verify_session_token(session)
+    if not user:
+        raise HTTPException(401, "Invalid session")
+    return {"email": user["email"], "name": user["name"], "auth_enabled": True}
 
 
 @app.get("/api/stats", response_model=StatsResponse)
