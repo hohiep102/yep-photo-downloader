@@ -55,7 +55,7 @@ export default function LoginPage() {
 
           <button
             onClick={handleLogin}
-            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white text-gray-800 font-medium hover:bg-gray-100 transition-all duration-200 shadow-lg"
+            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white text-gray-800 font-medium hover:bg-gray-100 transition-all duration-200 shadow-lg cursor-pointer"
           >
             <svg className="w-5 h-5" viewBox="0 0 21 21" fill="none">
               <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
