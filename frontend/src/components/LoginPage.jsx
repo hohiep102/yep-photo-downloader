@@ -9,7 +9,7 @@ export default function LoginPage() {
     const domain = params.get('domain');
 
     if (err === 'domain_not_allowed') {
-      setError(`Chỉ cho phép đăng nhập với email @${domain}`);
+      setError(`Chỉ cho phép đăng nhập với email @${domain || 'finos.asia'}`);
     } else if (err) {
       setError('Đăng nhập thất bại. Vui lòng thử lại.');
     }
@@ -66,9 +66,14 @@ export default function LoginPage() {
             Đăng nhập với Microsoft
           </button>
 
-          <p className="mt-6 text-white/50 text-xs">
-            Đăng nhập bằng tài khoản Microsoft của bạn
-          </p>
+          <div className="mt-6 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+            <p className="text-cyan-300 text-sm font-medium">
+              Chỉ chấp nhận email @finos.asia
+            </p>
+            <p className="text-white/50 text-xs mt-1">
+              Vui lòng đăng nhập bằng tài khoản Microsoft công ty
+            </p>
+          </div>
         </div>
       </div>
     </div>
