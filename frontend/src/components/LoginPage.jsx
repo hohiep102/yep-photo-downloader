@@ -9,7 +9,7 @@ export default function LoginPage() {
     const domain = params.get('domain');
 
     if (err === 'domain_not_allowed') {
-      setError(`Chỉ cho phép đăng nhập với email @${domain || 'finos.asia'}`);
+      setError(`Chỉ cho phép đăng nhập với email @${domain}`);
     } else if (err) {
       setError('Đăng nhập thất bại. Vui lòng thử lại.');
     }
@@ -41,7 +41,7 @@ export default function LoginPage() {
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-2">
-            Galaxy Holdings <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-violet-400">YEP 2026</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-violet-400">Photo</span> Finder
           </h1>
           <p className="text-white/60 mb-8">
             Đăng nhập để tìm ảnh của bạn
@@ -66,14 +66,9 @@ export default function LoginPage() {
             Đăng nhập với Microsoft
           </button>
 
-          <div className="mt-6 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-            <p className="text-cyan-300 text-sm font-medium">
-              Chỉ chấp nhận email @finos.asia
-            </p>
-            <p className="text-white/50 text-xs mt-1">
-              Vui lòng đăng nhập bằng tài khoản Microsoft công ty
-            </p>
-          </div>
+          <p className="mt-6 text-white/50 text-xs">
+            Đăng nhập bằng tài khoản Microsoft của bạn
+          </p>
         </div>
       </div>
     </div>

@@ -152,7 +152,7 @@ function App() {
     }
     return (
       <>
-        Galaxy Holdings <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-violet-400">YEP 2026</span>
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-violet-400">Photo</span> Finder
       </>
     );
   };
@@ -292,9 +292,7 @@ function App() {
 
       {/* Footer */}
       <footer className="relative z-10 text-center py-6 text-white/40 text-sm">
-        {presetName === 'finos'
-          ? 'Photo Finder • Find your photos with AI'
-          : 'Galaxy Holdings Year End Party 2026'}
+        Photo Finder • Find your photos with AI
       </footer>
     </div>
   );
